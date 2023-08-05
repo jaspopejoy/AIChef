@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Net.Http.Headers;
 using System.Linq.Expressions;
 using AIChef.Client.Shared;
+using System.Text.Json.Serialization;
 
 namespace AIChef.Server.Services
 {
@@ -109,6 +110,22 @@ namespace AIChef.Server.Services
                 },
             }
         };
+
+        public OpenAIService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+            var apiKey = _configuration["OpenAi:OpenAiKey"] ?? Environment.GetEnvironmentVariable("OpenAiKey");
+
+            _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            _httpClient.DefaultRequestHeaders.Authorization = new("Bearer", apiKey);
+
+            _jsonOptions = new()
+            {
+                PropertyNameCaseInsensitive = true,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            };
+        }
 
         public async Task<List<Idea>> CreateRecipeIdeas(string mealtime, List<string> ingredientList)
         {
