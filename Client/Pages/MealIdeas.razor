@@ -23,9 +23,7 @@
 }
 else
 {
-    <div class="container">
-        <p>Loading...</p>
-    </div>
+    <ChefSpinner></ChefSpinner>
 }
 
 @code {
@@ -93,7 +91,7 @@ else
         }
     }
 
-    private void GetRecipe( int index)
+    private void GetRecipe(int index)
     {
         navigationManager.NavigateTo($"/mealRecipe/{index}");
     }

@@ -182,7 +182,7 @@ namespace AIChef.Server.Services
 
         }
 
-        public async Task<RecipeImage?> CreateRecipe(string title, List<string> Ingredients)
+        public async Task<Recipe?> CreateRecipe(string title, List<string> Ingredients)
         {
             string url = $"{_baseUrl}chat/completions";
             string systemPrompt = "You are a world-renowned chef. Create the recipe with ingredients, instructions and a summary";
@@ -228,7 +228,32 @@ namespace AIChef.Server.Services
             }
             
             return recipe?.Data;
+        }
 
+        public async Task<RecipeImage?> CreateRecipeImage(string recipeTitle)
+        {
+            string url = $"{_baseUrl}images/generations";
+            string userPrompt = $"Create a resturant product shot for {recipeTitle}";
+
+            ImageGenerationRequest request = new()
+            {
+                Prompt = userPrompt
+            };
+
+            HttpResponseMessage httpResponse = await _httpClient.PostAsJsonAsync(url, request, _jsonOptions);
+
+            RecipeImage? recipeImage = null;
+
+            try
+            {
+                recipeImage = await httpResponse.Content.ReadFromJsonAsync<RecipeImage>();
+            }
+            catch
+            {
+                Console.Write("Error: Recipe Image could not be retreived");
+            }
+            
+            return recipeImage;
         }
     }
 }
